@@ -1,0 +1,34 @@
+Projeto disciplinar de José Manuel Coelho dos Santos
+ECP - 21 para a materia de MPS
+
+    Gerenciador de equipe/projeto.
+
+Cenario
+    Baseado no projeto de P&D que participo, um líder administra projetos
+    e os membros que participam deles, no fim ele entrega o projeto para avaliação
+    do gerente.
+
+Descrição
+    Todos:
+        se cadastram
+        fazem login
+
+    O líder pode:
+        criar um projeto
+        solicitar membros para trabalhar nele
+        autorizar tranferência de membros que o tiverem solicitado
+        apresentar um projeto
+        arquivar um projeto
+
+    O gerente pode:
+        avaliar um projeto que esteja apresentado
+        aceitar a solicitação de um membro que não esteja vinculado a um projeto para participar de um projeto
+
+Observações
+    -Intencionalmente mantive 10 casos de uso no projeto para termos didaticos, ele
+    poderia ser ampliado e ter mais funções porém abstrai de forma 'ingênua' para evitar
+    refazer diversas vezes.
+    -os arquivos Boundary, Control e Entity representam o modelo BCE:
+        --Boundary possui as classes de tela e todos os componentes visuais com alguma logica
+        --Control tem as classes de controle que podem de fato alterar as entidades( no meu caso tabelas sql)
+        --Entity define as entidades/tabela do sistema
