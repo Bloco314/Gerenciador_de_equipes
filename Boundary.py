@@ -90,11 +90,17 @@ class Tela_consultas(Tela_base):
         ger.setStyleSheet(f"QPushButton{css.btnEstilo2}")
         ger.clicked.connect(self.gerente)
 
-        proj = QPushButton("PROJ",self)
+        proj = QPushButton("PROJ", self)
         proj.move(370, 580)
         proj.resize(100, 80)
         proj.setStyleSheet(f"QPushButton{css.btnEstilo2}")
         proj.clicked.connect(self.projeto)
+        
+        sol = QPushButton("SOLI", self)
+        sol.move(490, 580)
+        sol.resize(100, 80)
+        sol.setStyleSheet(f"QPushButton{css.btnEstilo2}")
+        sol.clicked.connect(self.solicitacao)
 
     def criatabela(self):
         self.control = Control.Consultas()
@@ -122,6 +128,12 @@ class Tela_consultas(Tela_base):
 
     def projeto(self):
         lista = self.control.listaProjeto()
+        self.model = Tabela(lista)
+        self.tabela.setModel(self.model)
+        self.tabela.reset()
+
+    def solicitacao(self):
+        lista = self.control.listaSolicitacao()
         self.model = Tabela(lista)
         self.tabela.setModel(self.model)
         self.tabela.reset()
@@ -631,6 +643,55 @@ class Tela_solicitamembro(Tela_base):
 
     def elementos(self):
         self.incluibotaodeinicio()
+        self.criaTabela()
+        self.preenche()
+        nicked = QLineEdit(self.logado, self)
+        nicked.move(5, 5)
+        nicked.resize(200, 40)
+        nicked.setStyleSheet(f"QLineEdit{css.nickEstilo}")
+        nicked.setAlignment(Qt.AlignCenter)
+        nicked.setDisabled(True)
+
+        self.nickname = QLineEdit(self)
+        self.nickname.move(300, 580)
+        self.nickname.resize(200, 30)
+        campotxt = QLineEdit("NICK:", self)
+        campotxt.move(210, 580)
+        campotxt.resize(80, 30)
+        campotxt.setEnabled(False)
+
+        self.idDestino = QLineEdit(self)
+        self.idDestino.move(300, 630)
+        self.idDestino.resize(200, 30)
+        campotxt2 = QLineEdit("PROJETO:", self)
+        campotxt2.move(210, 630)
+        campotxt2.resize(80, 30)
+        campotxt2.setEnabled(False)
+
+        self.apresenta = QPushButton("Solicita", self)
+        self.apresenta.move(510, 580)
+        self.apresenta.resize(140, 70)
+        self.apresenta.setStyleSheet(f"QPushButton{css.btnEstilo}")
+        self.apresenta.clicked.connect(self.solicita)
+
+    def criaTabela(self):
+        self.tabela = QTableView(self)
+        self.tabela.move(160, 50)
+        self.tabela.resize(475, 500)
+        self.apr = Control.SolicitaMembro()
+        self.preenche()
+
+    def preenche(self):
+        lista = self.apr.listaFuncionarios()
+        self.model = Tabela(lista)
+        self.tabela.setModel(self.model)
+        self.tabela.reset()
+
+    def solicita(self):
+        self.msg = Tela_mensagem(self.apr.solicita(self.nickname.text(),self.idDestino.text()))
+        self.nickname.setText("")
+        self.idDestino.setText("")
+        self.preenche()
 
     def inicio(self):
         self.a = Tela_lider(self.logado)

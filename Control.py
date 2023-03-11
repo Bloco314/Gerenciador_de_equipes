@@ -47,6 +47,16 @@ class Consultas:
             lista.append(linha)
         return lista
 
+    def listaSolicitacao(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT nickRef,idOrigem,idDestino FROM SOLICITACAO")
+        lista = []
+        u = ("nick","idOrigem","idDestino")
+        lista.append(u)
+        for linha in cursor.fetchall():
+            lista.append(linha)
+        return lista
 
 # control use case 1
 class Logar:
@@ -194,6 +204,35 @@ class ApresentaProjeto:
 
 
 # control use case 5
+class SolicitaMembro:
+    def listaFuncionarios(self):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT nick,nome,cargo,idProjeto FROM FUNCIONARIO")
+            lista = [("nick","nome","cargo","projeto")]
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro sql")]
+
+    def solicita(self,nick,idDestino):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT idProjeto FROM FUNCIONARIO WHERE nick=?",(nick,))
+            idOrigem = cursor.fetchone()[0]
+            cursor.execute("INSERT INTO SOLICITACAO VALUES (?,?,?)",(idOrigem,idDestino,nick))
+            conn.commit()
+            return "Solicitacao criada."
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return "Erro SQL"
+
 # control use case 6
 # control use case 7
 # control use case 8

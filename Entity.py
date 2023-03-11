@@ -41,6 +41,10 @@ class Lider:
                         senha TEXT
                 );
                 """)
+    def destroiTabela(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE LIDER")
 
     def limpaTabela(self):
         try:
@@ -73,6 +77,10 @@ class Projeto:
                    nickLider TEXT REFERENCES LIDER(nick)
                );
                """)
+    def destroiTabela(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE PROJETO")
 
     def limpaTabela(self):
         try:
@@ -107,6 +115,10 @@ class Funcionario:
                     idProjeto TEXT REFERENCES PROJETO(id)
                 );
                 """)
+    def destroiTabela(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE FUNCIONARIO")
 
     def limpaTabela(self):
         try:
@@ -138,6 +150,11 @@ class Gerente:
                );
                """)
 
+    def destroiTabela(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE GERENTE")
+
     def limpaTabela(self):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -162,11 +179,15 @@ class Solicitacao:
         cursor = conn.cursor()
         cursor.execute("""
                 CREATE TABLE IF NOT EXISTS SOLICITACAO(
-                    idOrigem TEXT REFERENCES PROJETO(id),
-                    idDestino  TEXT REFERENCES PROJETO(id),
-                    nickREf TEXT REFERENCES FUNCIONARIO(nick)
+                    idOrigem TEXT,
+                    idDestino  TEXT,
+                    nickRef TEXT REFERENCES FUNCIONARIO(nick)
                 );
                 """)
+    def destroiTabela(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE SOLICITACAO")
 
     def limpaTabela(self):
         try:
@@ -197,6 +218,11 @@ class Avaliacao:
                     idProjeto TEXT REFERENCES PROJETO(id)         
                 );
                 """)
+
+    def destroiTabela(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE AVALIACAO")
 
     def limpaTabela(self):
         try:
