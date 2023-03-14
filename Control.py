@@ -255,6 +255,7 @@ class AceitaTransferencia:
     def recusaSolicitacao(self,quest):
         pass
 
+
 # control use case 7
 # control use case 8
 # control use case 9

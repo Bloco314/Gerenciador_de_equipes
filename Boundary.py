@@ -835,3 +835,4 @@ class Tela_solicitatranferencia(Tela_base):
 
     def elementos(self):
         self.incluibotaodeinicio()
+
