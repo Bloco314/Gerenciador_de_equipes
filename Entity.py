@@ -1,7 +1,7 @@
 import sqlite3
 
 
-class criaDB:
+class ADMDB:
     def __init__(self):
         self.criaDB()
 
@@ -23,6 +23,25 @@ class criaDB:
 
         avaliacao = Avaliacao()
         avaliacao.criaTabela()
+
+    def destroiDB(self):
+        lider = Lider()
+        lider.destroiTabela()
+
+        projeto = Projeto()
+        projeto.destroiTabela()
+
+        funcionario = Funcionario()
+        funcionario.destroiTabela()
+
+        gerente = Gerente()
+        gerente.destroiTabela()
+
+        solicitacao = Solicitacao()
+        solicitacao.destroiTabela()
+
+        avaliacao = Avaliacao()
+        avaliacao.destroiTabela()
 
 
 class Lider:
