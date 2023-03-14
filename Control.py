@@ -234,6 +234,27 @@ class SolicitaMembro:
             return "Erro SQL"
 
 # control use case 6
+class AceitaTransferencia:
+    def listaSolicitacoes(self):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT nickRef,idOrigem,idDestino FROM SOLICITACAO")
+            lista = []
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro sql")]
+
+    def aceitaSolicitacao(self,quest):
+        print(quest)
+
+    def recusaSolicitacao(self,quest):
+        pass
+
 # control use case 7
 # control use case 8
 # control use case 9

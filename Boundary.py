@@ -710,6 +710,60 @@ class Tela_transferemembro(Tela_base):
 
     def elementos(self):
         self.incluibotaodeinicio()
+        self.criaTabela()
+        self.preenche()
+
+        nicked = QLineEdit(self.logado, self)
+        nicked.move(5, 5)
+        nicked.resize(200, 40)
+        nicked.setStyleSheet(f"QLineEdit{css.nickEstilo}")
+        nicked.setAlignment(Qt.AlignCenter)
+        nicked.setDisabled(True)
+
+        self.aceita = QPushButton("Aceitar", self)
+        self.aceita.move(230, 580)
+        self.aceita.resize(140, 70)
+        self.aceita.setStyleSheet(f"QPushButton{css.btnEstilo}")
+        self.aceita.clicked.connect(self.aceitar)
+
+        self.recusa = QPushButton("Recusar", self)
+        self.recusa.move(440, 580)
+        self.recusa.resize(140, 70)
+        self.recusa.setStyleSheet(f"QPushButton{css.btnEstilo}")
+        self.recusa.clicked.connect(self.recusar)
+
+        self.help = QPushButton("?", self)
+        self.help.move(700, 600)
+        self.help.resize(80, 70)
+        self.help.clicked.connect(self.helpme)
+
+    def aceitar(self):
+        quest = [   self.tabela.currentIndex().siblingAtColumn(0).data(),
+                    self.tabela.currentIndex().siblingAtColumn(1).data(),
+                    self.tabela.currentIndex().siblingAtColumn(2).data()]
+        self.transfere.aceitaSolicitacao(quest)
+
+    def recusar(self):
+        quest = [self.tabela.currentIndex().siblingAtColumn(0).data(),
+                 self.tabela.currentIndex().siblingAtColumn(1).data(),
+                 self.tabela.currentIndex().siblingAtColumn(2).data()]
+        self.transfere.recusaSolicitacao(quest)
+
+    def helpme(self):
+        self.msg = Tela_mensagem("Selecione uma linha na tabela")
+
+    def criaTabela(self):
+        self.tabela = QTableView(self)
+        self.tabela.move(160, 50)
+        self.tabela.resize(475, 500)
+        self.transfere = Control.AceitaTransferencia()
+        self.preenche()
+
+    def preenche(self):
+        lista = self.transfere.listaSolicitacoes()
+        self.model = Tabela(lista)
+        self.tabela.setModel(self.model)
+        self.tabela.reset()
 
     def inicio(self):
         self.a = Tela_lider(self.logado)
