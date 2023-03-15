@@ -782,6 +782,46 @@ class Tela_arquivaprojeto(Tela_base):
 
     def elementos(self):
         self.incluibotaodeinicio()
+        self.criaTabela()
+        nicked = QLineEdit(self.logado, self)
+        nicked.move(5, 5)
+        nicked.resize(200, 40)
+        nicked.setStyleSheet(f"QLineEdit{css.nickEstilo}")
+        nicked.setAlignment(Qt.AlignCenter)
+        nicked.setDisabled(True)
+
+        self.id = QLineEdit(self)
+        self.id.move(300, 580)
+        self.id.resize(200, 30)
+
+        campotxt = QLineEdit("ID:", self)
+        campotxt.move(210, 580)
+        campotxt.resize(80, 30)
+        campotxt.setEnabled(False)
+
+        self.arquiva = QPushButton("Arquivar", self)
+        self.arquiva.move(510, 555)
+        self.arquiva.resize(140, 70)
+        self.arquiva.setStyleSheet(f"QPushButton{css.btnEstilo}")
+        self.arquiva.clicked.connect(self.arquivar)
+
+    def arquivar(self):
+        self.msg = Tela_mensagem(self.arqv.arquivaProjeto(self.id.text()))
+        self.id.setText("")
+        self.preenche()
+
+    def criaTabela(self):
+        self.tabela = QTableView(self)
+        self.tabela.move(160, 50)
+        self.tabela.resize(475, 500)
+        self.arqv = Control.ArquivaProjeto()
+        self.preenche()
+
+    def preenche(self):
+        lista = self.arqv.listaProjetos(self.logado)
+        self.model = Tabela(lista)
+        self.tabela.setModel(self.model)
+        self.tabela.reset()
 
     def inicio(self):
         self.a = Tela_lider(self.logado)

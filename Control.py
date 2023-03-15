@@ -233,6 +233,7 @@ class SolicitaMembro:
             print("Exception class is: ", er.__class__)
             return "Erro SQL"
 
+
 # control use case 6
 class AceitaTransferencia:
     def listaSolicitacoes(self):
@@ -250,13 +251,45 @@ class AceitaTransferencia:
             return [("erro sql")]
 
     def aceitaSolicitacao(self,quest):
-        print(quest)
+        pass
 
     def recusaSolicitacao(self,quest):
         pass
 
 
 # control use case 7
+class ArquivaProjeto:
+    def listaProjetos(self,nick):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT id,nome,apresentado FROM PROJETO WHERE nickLider = ?",(nick,))
+            lista = [("id","nome","status")]
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
+
+    def arquivaProjeto(self,id):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE ID = ?", (id,))
+            numberOfRows = cursor.fetchone()[0]
+            if numberOfRows > 0:
+                cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE idProjeto = ?",(id,id))
+                cursor.execute("DELETE FROM PROJETO WHERE id=?", (id,))
+                conn.commit()
+                return "Projeto arquivado"
+            else:
+                return "ID invalido"
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
 # control use case 8
 # control use case 9
 # control use case 10
