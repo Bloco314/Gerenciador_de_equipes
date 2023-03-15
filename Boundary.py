@@ -741,13 +741,15 @@ class Tela_transferemembro(Tela_base):
         quest = [   self.tabela.currentIndex().siblingAtColumn(0).data(),
                     self.tabela.currentIndex().siblingAtColumn(1).data(),
                     self.tabela.currentIndex().siblingAtColumn(2).data()]
-        self.transfere.aceitaSolicitacao(quest)
+        self.msg = Tela_mensagem(self.transfere.aceitaSolicitacao(quest))
+        self.preenche()
 
     def recusar(self):
         quest = [self.tabela.currentIndex().siblingAtColumn(0).data(),
                  self.tabela.currentIndex().siblingAtColumn(1).data(),
                  self.tabela.currentIndex().siblingAtColumn(2).data()]
         self.transfere.recusaSolicitacao(quest)
+        self.preenche()
 
     def helpme(self):
         self.msg = Tela_mensagem("Selecione uma linha na tabela")

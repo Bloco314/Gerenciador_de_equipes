@@ -6,9 +6,9 @@ class Consultas:
     def listaFuncionario(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT nick,nome,senha,cargo FROM FUNCIONARIO")
+        cursor.execute("SELECT nick,nome,senha,cargo,idProjeto FROM FUNCIONARIO")
         lista = []
-        u = ("nick", "nome", "senha", "cargo")
+        u = ("nick", "nome", "senha", "cargo","projeto")
         lista.append(u)
         for linha in cursor.fetchall():
             lista.append(linha)
@@ -241,7 +241,7 @@ class AceitaTransferencia:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
             cursor.execute("SELECT nickRef,idOrigem,idDestino FROM SOLICITACAO")
-            lista = []
+            lista = [("nickref","idorigem","iddestino")]
             for linha in cursor.fetchall():
                 lista.append(linha)
             return lista
@@ -251,10 +251,40 @@ class AceitaTransferencia:
             return [("erro sql")]
 
     def aceitaSolicitacao(self,quest):
-        pass
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            if quest[1]==None:
+                cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE nick = ?",(quest[2],quest[0]))
+                conn.commit()
+                cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idDestino=?",(quest[0],quest[2]))
+                conn.commit()
+            else:
+                cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE idProjeto = ? AND nick = ?",(quest[2],quest[1],quest[0]))
+                conn.commit()
+                cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idOrigem=? AND idDestino=?",(quest[0],quest[1],quest[2]))
+                conn.commit()
+            return "Efetuada a transferencia"
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
 
     def recusaSolicitacao(self,quest):
-        pass
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            if quest[1] == None:
+                cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idDestino=?", (quest[0], quest[2]))
+                conn.commit()
+            else:
+                cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idOrigem=? AND idDestino=?", (quest[0], quest[1], quest[2]))
+                conn.commit()
+            return "Deletado com sucesso"
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
 
 
 # control use case 7
@@ -281,6 +311,7 @@ class ArquivaProjeto:
             numberOfRows = cursor.fetchone()[0]
             if numberOfRows > 0:
                 cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE idProjeto = ?",(id,id))
+                conn.commit()
                 cursor.execute("DELETE FROM PROJETO WHERE id=?", (id,))
                 conn.commit()
                 return "Projeto arquivado"
