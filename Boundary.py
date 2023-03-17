@@ -749,7 +749,7 @@ class F_Transfere_membro(Tela_base):
         quest = [self.tabela.currentIndex().siblingAtColumn(0).data(),
                  self.tabela.currentIndex().siblingAtColumn(1).data(),
                  self.tabela.currentIndex().siblingAtColumn(2).data()]
-        self.transfere.recusaSolicitacao(quest)
+        self.msg = Tela_mensagem(self.transfere.recusaSolicitacao(quest))
         self.preenche()
 
     def helpme(self):

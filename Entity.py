@@ -6,45 +6,45 @@ class ADMDB:
         self.criaDB()
 
     def criaDB(self):
-        lider = Lider()
+        lider = E_Lider()
         lider.criaTabela()
 
-        projeto = Projeto()
+        projeto = E_Projeto()
         projeto.criaTabela()
 
-        funcionario = Funcionario()
+        funcionario = E_Funcionario()
         funcionario.criaTabela()
 
-        gerente = Gerente()
+        gerente = E_Gerente()
         gerente.criaTabela()
 
-        solicitacao = Solicitacao()
+        solicitacao = E_Solicitacao()
         solicitacao.criaTabela()
 
-        avaliacao = Avaliacao()
+        avaliacao = E_Avaliacao()
         avaliacao.criaTabela()
 
     def destroiDB(self):
-        lider = Lider()
+        lider = E_Lider()
         lider.destroiTabela()
 
-        projeto = Projeto()
+        projeto = E_Projeto()
         projeto.destroiTabela()
 
-        funcionario = Funcionario()
+        funcionario = E_Funcionario()
         funcionario.destroiTabela()
 
-        gerente = Gerente()
+        gerente = E_Gerente()
         gerente.destroiTabela()
 
-        solicitacao = Solicitacao()
+        solicitacao = E_Solicitacao()
         solicitacao.destroiTabela()
 
-        avaliacao = Avaliacao()
+        avaliacao = E_Avaliacao()
         avaliacao.destroiTabela()
 
 
-class Lider:
+class E_Lider:
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -55,11 +55,6 @@ class Lider:
                         senha TEXT
                 );
                 """)
-
-    def destroiTabela(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("DROP TABLE LIDER")
 
     def listar_lideres(self):
         conn = sqlite3.connect('meubanco.db')
@@ -72,11 +67,26 @@ class Lider:
             lista.append(linha)
         return lista
 
-    def limpaTabela(self):
+    def valida_login(self,nick,senha):
         try:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM LIDER")
+            cursor.execute("SELECT nick,senha FROM LIDER")
+            for linha in cursor.fetchall():
+                if linha[0] == nick and linha[1] == senha:
+                    return True
+            return False
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return False
+
+    def criar_lider(self,nick, nome, senha):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            tupla = (nick, nome, senha)
+            cursor.execute("""INSERT INTO LIDER (nick,nome,senha) VALUES (?,?,?)""", tupla)
             conn.commit()
             return True
         except sqlite3.Error as er:
@@ -85,7 +95,7 @@ class Lider:
             return False
 
 
-class Projeto:
+class E_Projeto:
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -98,27 +108,40 @@ class Projeto:
                );
                """)
 
-    def destroiTabela(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("DROP TABLE PROJETO")
-
     def listar_projetos(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT id,nome,apresentado,nickLider FROM PROJETO")
-        lista = []
-        u = ("id", "nome","apresentado", "nickLider")
-        lista.append(u)
-        for linha in cursor.fetchall():
-            lista.append(linha)
-        return lista
-
-    def limpaTabela(self):
         try:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM PROJETO")
+            cursor.execute("SELECT id,nome,apresentado FROM PROJETO")
+            lista = [("id", "nome", "status")]
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
+
+    def listar_projetos_bylider(self,nick):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT id,nome,apresentado FROM PROJETO WHERE nickLider = ?",(nick,))
+            lista = [("id","nome","status")]
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro","no","sql")]
+
+    def cria_projeto(self, id, nome, nick):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            tupla = (id,nome,"não apresentado",nick)
+            cursor.execute("""INSERT INTO PROJETO (id,nome,apresentado,nickLider) VALUES (?,?,?,?)""", tupla)
             conn.commit()
             return True
         except sqlite3.Error as er:
@@ -126,8 +149,51 @@ class Projeto:
             print("Exception class is: ", er.__class__)
             return False
 
+    def apresentar(self,id):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE ID = ?", (id,))
+            numberOfRows = cursor.fetchone()[0]
+            if numberOfRows>0:
+                cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE (ID = ? AND apresentado = ?)",(id, "não apresentado"))
+                numberOfRows = cursor.fetchone()[0]
+                if numberOfRows > 0:
+                    cursor.execute("UPDATE PROJETO SET apresentado = ? WHERE id = ?",("apresentado",id))
+                    conn.commit()
+                    return "Apresentado com sucesso!"
+                else:
+                    return "Projeto já apresentado!"
+            else:
+                return "Projeto não existe!"
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return "Erro SQL"
 
-class Funcionario:
+    def deletar(self, id):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM PROJETO WHERE id=?", (id,))
+            conn.commit()
+            return "Projeto arquivado"
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
+
+    def projeto_existe(self, id):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE ID = ?", (id,))
+        numberOfRows = cursor.fetchone()[0]
+        if numberOfRows > 0:
+            return True
+        return False
+
+
+class E_Funcionario:
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -141,36 +207,79 @@ class Funcionario:
                 );
                 """)
 
-    def destroiTabela(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("DROP TABLE FUNCIONARIO")
-
     def listar_funcionarios(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT nick,nome,senha,cargo,idProjeto FROM FUNCIONARIO")
-        lista = []
-        u = ("nick", "nome", "senha", "cargo","projeto")
-        lista.append(u)
-        for linha in cursor.fetchall():
-            lista.append(linha)
-        return lista
-
-    def limpaTabela(self):
         try:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM FUNCIONARIO")
-            conn.commit()
-            return True
+            cursor.execute("SELECT nick,nome,cargo,idProjeto FROM FUNCIONARIO")
+            lista = [("nick", "nome", "cargo", "projeto")]
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro sql")]
+
+    def get_idprojeto_bynick(self,nick):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT idProjeto FROM FUNCIONARIO WHERE nick=?", (nick,))
+        idOrigem = cursor.fetchone()[0]
+        return idOrigem
+
+    def valida_login(self,nick,senha):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT nick,senha FROM FUNCIONARIO")
+            lista = []
+            for linha in cursor.fetchall():
+                if linha[0] == nick and linha[1] == senha:
+                    return True
+            return False
         except sqlite3.Error as er:
             print('SQLite error: %s' % (' '.join(er.args)))
             print("Exception class is: ", er.__class__)
             return False
 
+    def cria_funcionario(self, nick, nome, senha, cargo):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            tupla = (nick, nome, senha, cargo, None)
+            cursor.execute("""INSERT INTO FUNCIONARIO (nick,nome,senha,cargo,idProjeto) VALUES (?,?,?,?,?)""", tupla)
+            conn.commit()
+            return True
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            False
 
-class Gerente:
+    def desvincula_funcionarios_do_projeto(self, id):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE idProjeto = ?", (id, id))
+            conn.commit()
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
+
+    def tranfere_de_projeto(self, nick, iddestino):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE nick = ?", (iddestino, nick))
+            conn.commit()
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
+
+
+class E_Gerente:
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -181,11 +290,6 @@ class Gerente:
                    senha TEXT
                );
                """)
-
-    def destroiTabela(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("DROP TABLE GERENTE")
 
     def listar_gerentes(self):
         conn = sqlite3.connect('meubanco.db')
@@ -198,11 +302,27 @@ class Gerente:
             lista.append(linha)
         return lista
 
-    def limpaTabela(self):
+    def valida_login(self,nick,senha):
         try:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM GERENTE")
+            cursor.execute("SELECT nick,senha FROM GERENTE")
+            lista = []
+            for linha in cursor.fetchall():
+                if linha[0] == nick and linha[1] == senha:
+                    return True
+            return False
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return False
+
+    def criar_gerente(self, nick, nome, senha):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            tupla = (nick, nome, senha)
+            cursor.execute("""INSERT INTO GERENTE (nick,nome,senha) VALUES (?,?,?)""", tupla)
             conn.commit()
             return True
         except sqlite3.Error as er:
@@ -211,7 +331,7 @@ class Gerente:
             return False
 
 
-class Solicitacao:
+class E_Solicitacao:
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -223,36 +343,58 @@ class Solicitacao:
                 );
                 """)
 
-    def destroiTabela(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("DROP TABLE SOLICITACAO")
-
     def listar_solicitacoes(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT nickRef,idOrigem,idDestino FROM SOLICITACAO")
-        lista = []
-        u = ("nick","idOrigem","idDestino")
-        lista.append(u)
-        for linha in cursor.fetchall():
-            lista.append(linha)
-        return lista
-
-    def limpaTabela(self):
         try:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM SOLICITACAO")
-            conn.commit()
-            return True
+            cursor.execute("SELECT nickRef,idOrigem,idDestino FROM SOLICITACAO")
+            lista = [("nickref", "idorigem", "iddestino")]
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
         except sqlite3.Error as er:
             print('SQLite error: %s' % (' '.join(er.args)))
             print("Exception class is: ", er.__class__)
-            return False
+            return [("erro sql")]
+
+    def cria_solicitacao(self, idOrigem, idDestino, nick):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO SOLICITACAO VALUES (?,?,?)", (idOrigem, idDestino, nick))
+            conn.commit()
+            return "Solicitacao criada."
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return "Erro SQL"
+
+    def deleta_solicitacao_semorigem(self, nick, iddestino):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idDestino=?", (nick, iddestino))
+            conn.commit()
+            return "Deletado com sucesso"
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
+
+    def deleta_solicitacao(self, nick, idorigem, iddestino):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idOrigem=? AND idDestino=?",(nick, idorigem, iddestino))
+            conn.commit()
+            return "Deletado com sucesso"
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
 
 
-class Avaliacao:
+class E_Avaliacao:
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -264,19 +406,13 @@ class Avaliacao:
                 );
                 """)
 
-    def destroiTabela(self):
+    def listar_avaliacoes(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
-        cursor.execute("DROP TABLE AVALIACAO")
-
-    def limpaTabela(self):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM AVALIACAO")
-            conn.commit()
-            return True
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return False
+        cursor.execute("SELECT idProjeto,nota,comentario FROM AVALIACAO")
+        lista = []
+        u = ("projeto", "nota", "comentario")
+        lista.append(u)
+        for linha in cursor.fetchall():
+            lista.append(linha)
+        return lista

@@ -6,282 +6,132 @@ import Entity
 # control da 'tela secreta'
 class Consultas:
     def listar_funcionarios(self):
-        a = Entity.Funcionario()
+        a = Entity.E_Funcionario()
         return a.listar_funcionarios()
 
     def listar_lideres(self):
-        a = Entity.Lider()
+        a = Entity.E_Lider()
         return a.listar_lideres()
 
     def listar_gerentes(self):
-        a = Entity.Gerente()
+        a = Entity.E_Gerente()
         return a.listar_gerentes()
 
     def listar_projetos(self):
-        a = Entity.Projeto()
+        a = Entity.E_Projeto()
         return a.listar_projetos()
 
     def listar_solicitacoes(self):
-        a = Entity.Solicitacao()
+        a = Entity.E_Solicitacao()
         return a.listar_solicitacoes()
+
+    def listar_avaliacoes(self):
+        a = Entity.E_Avaliacao()
+        return a.listar_avaliacoes()
+
 
 # control use case 1
 class C_Fazer_login:
     def loginLider(self, nick, senha):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT nick,senha FROM LIDER")
-            lista = []
-            for linha in cursor.fetchall():
-                if linha[0] == nick and linha[1] == senha:
-                    return True
-            return False
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return False
+        E = Entity.E_Lider()
+        return E.valida_login(nick,senha)
 
     def loginGerente(self, nick, senha):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT nick,senha FROM GERENTE")
-            lista = []
-            for linha in cursor.fetchall():
-                if linha[0] == nick and linha[1] == senha:
-                    return True
-            return False
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return False
+        E = Entity.E_Gerente()
+        return E.valida_login(nick,senha)
 
     def loginFuncionario(self, nick, senha):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT nick,senha FROM FUNCIONARIO")
-            lista = []
-            for linha in cursor.fetchall():
-                if linha[0] == nick and linha[1] == senha:
-                    return True
-            return False
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return False
+        E = Entity.E_Funcionario()
+        return E.valida_login(nick, senha)
 
 
 # control use case 2
 class C_Realiza_cadastro:
     def cadastraLider(self, nick, nome, senha):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            tupla = (nick, nome, senha)
-            cursor.execute("""INSERT INTO LIDER (nick,nome,senha) VALUES (?,?,?)""", tupla)
-            conn.commit()
-            return True
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return False
+        E = Entity.E_Lider()
+        return E.criar_lider(nick,nome,senha)
 
     def cadastraGerente(self, nick, nome, senha):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            tupla = (nick, nome, senha)
-            cursor.execute("""INSERT INTO GERENTE (nick,nome,senha) VALUES (?,?,?)""", tupla)
-            conn.commit()
-            return True
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return False
+        E = Entity.E_Gerente()
+        return E.criar_gerente(nick,nome,senha)
 
     def cadastraFuncionario(self, nick, nome, senha, cargo):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            tupla = (nick, nome, senha, cargo, None)
-            cursor.execute("""INSERT INTO FUNCIONARIO (nick,nome,senha,cargo,idProjeto) VALUES (?,?,?,?,?)""", tupla)
-            conn.commit()
-            return True
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            False
+        E = Entity.E_Funcionario()
+        return E.cria_funcionario(nick, nome, senha, cargo)
 
 
 # control use case 3
 class C_Cria_projeto:
-    def criaProjeto(self,id,nome,nick):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            tupla = (id,nome,"não apresentado",nick)
-            cursor.execute("""INSERT INTO PROJETO (id,nome,apresentado,nickLider) VALUES (?,?,?,?)""", tupla)
-            conn.commit()
-            return True
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return False
+    def criaProjeto(self, id, nome, nick):
+        E = Entity.E_Projeto()
+        return E.cria_projeto(id,nome,nick)
 
 
 # control use case 4
 class C_Apresenta_projeto:
     def listaProjetos(self,nick):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT id,nome,apresentado FROM PROJETO WHERE nickLider = ?",(nick,))
-            lista = [("id","nome","status")]
-            for linha in cursor.fetchall():
-                lista.append(linha)
-            return lista
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return [("erro","no","sql")]
+        E = Entity.E_Projeto()
+        return E.listar_projetos_bylider(nick)
 
     def apresentarProjeto(self,id):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE ID = ?", (id,))
-            numberOfRows = cursor.fetchone()[0]
-            if numberOfRows>0:
-                cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE (ID = ? AND apresentado = ?)",(id, "não apresentado"))
-                numberOfRows = cursor.fetchone()[0]
-                if numberOfRows > 0:
-                    cursor.execute("UPDATE PROJETO SET apresentado = ? WHERE id = ?",("apresentado",id))
-                    conn.commit()
-                    return "Apresentado com sucesso!"
-                else:
-                    return "Projeto já apresentado!"
-            else:
-                return "Projeto não existe!"
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return "Erro SQL"
+        E = Entity.E_Projeto()
+        return E.apresentar(id)
 
 
 # control use case 5
 class C_Solicita_membro:
     def listaFuncionarios(self):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT nick,nome,cargo,idProjeto FROM FUNCIONARIO")
-            lista = [("nick","nome","cargo","projeto")]
-            for linha in cursor.fetchall():
-                lista.append(linha)
-            return lista
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return [("erro sql")]
+        E = Entity.E_Funcionario()
+        return E.listar_funcionarios()
 
     def solicita(self,nick,idDestino):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT idProjeto FROM FUNCIONARIO WHERE nick=?",(nick,))
-            idOrigem = cursor.fetchone()[0]
-            cursor.execute("INSERT INTO SOLICITACAO VALUES (?,?,?)",(idOrigem,idDestino,nick))
-            conn.commit()
-            return "Solicitacao criada."
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return "Erro SQL"
+        E = Entity.E_Funcionario()
+        idO = E.get_idprojeto_bynick(nick)
+        S = Entity.E_Solicitacao()
+        return S.cria_solicitacao(idO,idDestino,nick)
 
 
 # control use case 6
 class C_Transfere_membro:
     def listaSolicitacoes(self):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT nickRef,idOrigem,idDestino FROM SOLICITACAO")
-            lista = [("nickref","idorigem","iddestino")]
-            for linha in cursor.fetchall():
-                lista.append(linha)
-            return lista
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return [("erro sql")]
+        E = Entity.E_Solicitacao()
+        return E.listar_solicitacoes()
 
     def aceitaSolicitacao(self,quest):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            if quest[1]==None:
-                cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE nick = ?",(quest[2],quest[0]))
-                conn.commit()
-                cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idDestino=?",(quest[0],quest[2]))
-                conn.commit()
-            else:
-                cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE idProjeto = ? AND nick = ?",(quest[2],quest[1],quest[0]))
-                conn.commit()
-                cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idOrigem=? AND idDestino=?",(quest[0],quest[1],quest[2]))
-                conn.commit()
-            return "Efetuada a transferencia"
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return [("erro no sql")]
+        E = Entity.E_Solicitacao()
+
+        F = Entity.E_Funcionario()
+        F.tranfere_de_projeto(quest[0], quest[2])
+        if quest[1]==None:
+            E.deleta_solicitacao_semorigem(quest[0],quest[2])
+        else:
+            E.deleta_solicitacao(quest[0], quest[1],quest[2])
+        return "Transferido"
 
     def recusaSolicitacao(self,quest):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            if quest[1] == None:
-                cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idDestino=?", (quest[0], quest[2]))
-                conn.commit()
-            else:
-                cursor.execute("DELETE FROM SOLICITACAO WHERE nickRef=? AND idOrigem=? AND idDestino=?", (quest[0], quest[1], quest[2]))
-                conn.commit()
-            return "Deletado com sucesso"
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return [("erro no sql")]
+        E = Entity.E_Solicitacao()
+        if quest[1] == None:
+            E.deleta_solicitacao_semorigem(quest[0], quest[2])
+        else:
+            E.deleta_solicitao(quest[0],quest[1],quest[2])
+        return "Recusado com sucesso"
 
 
 # control use case 7
 class C_Arquiva_projeto:
     def listaProjetos(self,nick):
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            cursor.execute("SELECT id,nome,apresentado FROM PROJETO WHERE nickLider = ?",(nick,))
-            lista = [("id","nome","status")]
-            for linha in cursor.fetchall():
-                lista.append(linha)
-            return lista
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return [("erro no sql")]
+        E = Entity.E_Projeto()
+        return E.listar_projetos_bylider(nick)
 
     def arquivaProjeto(self,id):
+        E = Entity.E_Projeto()
         try:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE ID = ?", (id,))
-            numberOfRows = cursor.fetchone()[0]
-            if numberOfRows > 0:
-                cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE idProjeto = ?",(id,id))
-                conn.commit()
-                cursor.execute("DELETE FROM PROJETO WHERE id=?", (id,))
-                conn.commit()
-                return "Projeto arquivado"
+            if E.projeto_existe(id):
+                F = Entity.E_Funcionario()
+                F.desvincula_funcionarios_do_projeto(id)
+                return E.deletar(id)
             else:
                 return "ID invalido"
         except sqlite3.Error as er:
