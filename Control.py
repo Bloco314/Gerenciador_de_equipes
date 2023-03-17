@@ -3,7 +3,7 @@ import sqlite3
 import Entity
 
 
-# control da 'tela secreta'
+# control da 'tela secreta' com consultas
 class Consultas:
     def listar_funcionarios(self):
         a = Entity.E_Funcionario()

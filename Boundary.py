@@ -4,7 +4,7 @@ from tabela import Tabela
 from PyQt5.QtCore import Qt
 
 
-# um modelo geral de tela com algumas propriedades uteis a serem herdadas
+# um modelo geral de tela com algumas propriedades uteis a serem herdadas.
 class Tela_base(QMainWindow):
     def __init__(self):
         super().__init__()
