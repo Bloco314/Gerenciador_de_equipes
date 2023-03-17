@@ -29,6 +29,7 @@ class Tela_base(QMainWindow):
         inicio.clicked.connect(self.inicio)
 
     def closeEvent(self, event):
+        print()
         print("chegamos ao fim")
 
     def inicio(self):
@@ -109,31 +110,31 @@ class Tela_consultas(Tela_base):
         self.tabela.resize(600, 500)
 
     def lider(self):
-        lista = self.control.listaLider()
+        lista = self.control.listar_lideres()
         self.model = Tabela(lista)
         self.tabela.setModel(self.model)
         self.tabela.reset()
 
     def gerente(self):
-        lista = self.control.listaGerente()
+        lista = self.control.listar_gerentes()
         self.model = Tabela(lista)
         self.tabela.setModel(self.model)
         self.tabela.reset()
 
     def funcionario(self):
-        lista = self.control.listaFuncionario()
+        lista = self.control.listar_funcionarios()
         self.model = Tabela(lista)
         self.tabela.setModel(self.model)
         self.tabela.reset()
 
     def projeto(self):
-        lista = self.control.listaProjeto()
+        lista = self.control.listar_projetos()
         self.model = Tabela(lista)
         self.tabela.setModel(self.model)
         self.tabela.reset()
 
     def solicitacao(self):
-        lista = self.control.listaSolicitacao()
+        lista = self.control.listar_solicitacoes()
         self.model = Tabela(lista)
         self.tabela.setModel(self.model)
         self.tabela.reset()
@@ -168,12 +169,12 @@ class Tela_inicial(Tela_base):
         secreta.clicked.connect(self.secreta)
 
     def login(self):
-        self.telalogin = Tela_login()
+        self.telalogin = F_Fazer_login()
         self.telalogin.show()
         self.setVisible(False)
 
     def cadastro(self):
-        self.telacadastro = Tela_cadastro()
+        self.telacadastro = F_Realiza_cadastro()
         self.telacadastro.show()
         self.setVisible(False)
 
@@ -232,27 +233,27 @@ class Tela_lider(Tela_base):
         nicked.setDisabled(True)
 
     def cria(self):
-        self.telacriaprojeto = Tela_criaProjeto(self.logado)
+        self.telacriaprojeto = F_Cria_projeto(self.logado)
         self.telacriaprojeto.show()
         self.setVisible(False)
 
     def apresenta(self):
-        self.telaapresentaprojeto = Tela_apresentaprojeto(self.logado)
+        self.telaapresentaprojeto = F_Apresenta_projeto(self.logado)
         self.telaapresentaprojeto.show()
         self.setVisible(False)
 
     def solicita(self):
-        self.telasolicitamembro = Tela_solicitamembro(self.logado)
+        self.telasolicitamembro = F_Solicita_membro(self.logado)
         self.telasolicitamembro.show()
         self.setVisible(False)
 
     def transferir(self):
-        self.telatransferemembro = Tela_transferemembro(self.logado)
+        self.telatransferemembro = F_Transfere_membro(self.logado)
         self.telatransferemembro.show()
         self.setVisible(False)
 
     def arquiva(self):
-        self.telaarquiva = Tela_arquivaprojeto(self.logado)
+        self.telaarquiva = F_Arquiva_projeto(self.logado)
         self.telaarquiva.show()
         self.setVisible(False)
 
@@ -276,12 +277,12 @@ class Tela_gerente(Tela_base):
         nicked.setDisabled(True)
 
     def aceitasolicitacao(self):
-        self.telaaceitasolicitacao = Tela_aceitasolicitacao(self.logado)
+        self.telaaceitasolicitacao = F_Aceita_solicitacao(self.logado)
         self.telaaceitasolicitacao.show()
         self.setVisible(False)
 
     def avaliaprojeto(self):
-        self.telaavaliaprojeto = Tela_avaliaprojeto(self.logado)
+        self.telaavaliaprojeto = F_Avalia_projeto(self.logado)
         self.telaavaliaprojeto.show()
         self.setVisible(False)
 
@@ -310,7 +311,7 @@ class Tela_funcionario(Tela_base):
 
 
 # boundary use case 1
-class Tela_login(Tela_base):
+class F_Fazer_login(Tela_base):
     def __init__(self):
         super().__init__()
         self.setTitulo("LOGIN")
@@ -383,7 +384,7 @@ class Tela_login(Tela_base):
         self.bx2.setChecked(False)
 
     def efetivaLogin(self):
-        cad = Control.Logar()
+        cad = Control.C_Fazer_login()
         if self.bx2.isChecked():
             if cad.loginLider(self.inputnick.text(), self.inputpass.text()):
                 self.telalider = Tela_lider(self.inputnick.text())
@@ -410,7 +411,7 @@ class Tela_login(Tela_base):
 
 
 # boundary usecase 2
-class Tela_cadastro(Tela_base):
+class F_Realiza_cadastro(Tela_base):
     def __init__(self):
         super().__init__()
         self.setTitulo("CADASTRO")
@@ -503,7 +504,7 @@ class Tela_cadastro(Tela_base):
         self.cargo.setText("")
 
     def efetivaCadastro(self):
-        cad = Control.Cadastrar()
+        cad = Control.C_Realiza_cadastro()
         if self.bx2.isChecked():
             if cad.cadastraLider(self.nick.text(), self.nome.text(), self.senha.text()):
                 self.tel = Tela_mensagem("Cadastrado com sucesso!")
@@ -521,7 +522,7 @@ class Tela_cadastro(Tela_base):
 
 
 # boundary usecase 3
-class Tela_criaProjeto(Tela_base):
+class F_Cria_projeto(Tela_base):
     def __init__(self,nick):
         super().__init__()
         self.setTitulo("CRIAR PROJETO")
@@ -561,7 +562,7 @@ class Tela_criaProjeto(Tela_base):
         criar.clicked.connect(self.criaProjeto)
 
     def criaProjeto(self):
-        cria = Control.CriaProjeto()
+        cria = Control.C_Cria_projeto()
         if cria.criaProjeto(self.id.text(), self.nome.text(), self.logado):
             self.mensagem = Tela_mensagem("Criado com sucesso!")
             self.nome.setText("")
@@ -574,7 +575,7 @@ class Tela_criaProjeto(Tela_base):
 
 
 # boundary usecase 4
-class Tela_apresentaprojeto(Tela_base):
+class F_Apresenta_projeto(Tela_base):
     def __init__(self,nick):
         super().__init__()
         self.setTitulo("APRESENTA PROJETO")
@@ -617,7 +618,7 @@ class Tela_apresentaprojeto(Tela_base):
         self.tabela = QTableView(self)
         self.tabela.move(160, 50)
         self.tabela.resize(475, 500)
-        self.apr = Control.ApresentaProjeto()
+        self.apr = Control.C_Apresenta_projeto()
         self.preenche()
 
     def preenche(self):
@@ -633,7 +634,7 @@ class Tela_apresentaprojeto(Tela_base):
 
 
 # boundary usecase 5
-class Tela_solicitamembro(Tela_base):
+class F_Solicita_membro(Tela_base):
     def __init__(self,nick):
         super().__init__()
         self.setTitulo("SOLICITA MEMBRO")
@@ -678,7 +679,7 @@ class Tela_solicitamembro(Tela_base):
         self.tabela = QTableView(self)
         self.tabela.move(160, 50)
         self.tabela.resize(475, 500)
-        self.apr = Control.SolicitaMembro()
+        self.apr = Control.C_Solicita_membro()
         self.preenche()
 
     def preenche(self):
@@ -700,7 +701,7 @@ class Tela_solicitamembro(Tela_base):
 
 
 # boundary usecase 6
-class Tela_transferemembro(Tela_base):
+class F_Transfere_membro(Tela_base):
     def __init__(self,nick):
         super().__init__()
         self.setTitulo("ACEITAR/RECUSAR TRANSFERENCIA")
@@ -758,7 +759,7 @@ class Tela_transferemembro(Tela_base):
         self.tabela = QTableView(self)
         self.tabela.move(160, 50)
         self.tabela.resize(475, 500)
-        self.transfere = Control.AceitaTransferencia()
+        self.transfere = Control.C_Transfere_membro()
         self.preenche()
 
     def preenche(self):
@@ -774,7 +775,7 @@ class Tela_transferemembro(Tela_base):
 
 
 # boundary usecase 7
-class Tela_arquivaprojeto(Tela_base):
+class F_Arquiva_projeto(Tela_base):
     def __init__(self,nick):
         super().__init__()
         self.setTitulo("ARQUIVAR PROJETO")
@@ -816,7 +817,7 @@ class Tela_arquivaprojeto(Tela_base):
         self.tabela = QTableView(self)
         self.tabela.move(160, 50)
         self.tabela.resize(475, 500)
-        self.arqv = Control.ArquivaProjeto()
+        self.arqv = Control.C_Arquiva_projeto()
         self.preenche()
 
     def preenche(self):
@@ -832,7 +833,7 @@ class Tela_arquivaprojeto(Tela_base):
 
 
 # boundary usecase 8
-class Tela_aceitasolicitacao(Tela_base):
+class F_Aceita_solicitacao(Tela_base):
     def __init__(self,nick):
         super().__init__()
         self.setTitulo("ACEITAR/RECUSAR SOLICITACOES")
@@ -850,7 +851,7 @@ class Tela_aceitasolicitacao(Tela_base):
 
 
 # boundary usecase 9
-class Tela_avaliaprojeto(Tela_base):
+class F_Avalia_projeto(Tela_base):
     def __init__(self,nick):
         super().__init__()
         self.setTitulo("AVALIAR PROJETO")
@@ -868,7 +869,7 @@ class Tela_avaliaprojeto(Tela_base):
 
 
 # boundary usecase 10
-class Tela_solicitatranferencia(Tela_base):
+class F_Solicita_transferencia(Tela_base):
     def __init__(self):
         super().__init__()
         self.setTitulo("SOLICITA TRANFERENCIA")
@@ -877,4 +878,3 @@ class Tela_solicitatranferencia(Tela_base):
 
     def elementos(self):
         self.incluibotaodeinicio()
-

@@ -45,11 +45,6 @@ class ADMDB:
 
 
 class Lider:
-    def __init__(self):
-        self.nick = None
-        self.nome = None
-        self.senha = None
-
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -60,10 +55,22 @@ class Lider:
                         senha TEXT
                 );
                 """)
+
     def destroiTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
         cursor.execute("DROP TABLE LIDER")
+
+    def listar_lideres(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT nick,nome,senha FROM LIDER")
+        lista = []
+        u = ("nick", "nome", "senha")
+        lista.append(u)
+        for linha in cursor.fetchall():
+            lista.append(linha)
+        return lista
 
     def limpaTabela(self):
         try:
@@ -79,12 +86,6 @@ class Lider:
 
 
 class Projeto:
-    def __init__(self):
-        self.id = None
-        self.nome = None
-        self.apresentado = None
-        self.nickLider = None
-
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -96,10 +97,22 @@ class Projeto:
                    nickLider TEXT REFERENCES LIDER(nick)
                );
                """)
+
     def destroiTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
         cursor.execute("DROP TABLE PROJETO")
+
+    def listar_projetos(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT id,nome,apresentado,nickLider FROM PROJETO")
+        lista = []
+        u = ("id", "nome","apresentado", "nickLider")
+        lista.append(u)
+        for linha in cursor.fetchall():
+            lista.append(linha)
+        return lista
 
     def limpaTabela(self):
         try:
@@ -115,13 +128,6 @@ class Projeto:
 
 
 class Funcionario:
-    def __init__(self):
-        self.nick = None
-        self.nome = None
-        self.senha = None
-        self.cargo = None
-        self.idProjeto = None
-
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -134,10 +140,22 @@ class Funcionario:
                     idProjeto TEXT REFERENCES PROJETO(id)
                 );
                 """)
+
     def destroiTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
         cursor.execute("DROP TABLE FUNCIONARIO")
+
+    def listar_funcionarios(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT nick,nome,senha,cargo,idProjeto FROM FUNCIONARIO")
+        lista = []
+        u = ("nick", "nome", "senha", "cargo","projeto")
+        lista.append(u)
+        for linha in cursor.fetchall():
+            lista.append(linha)
+        return lista
 
     def limpaTabela(self):
         try:
@@ -153,11 +171,6 @@ class Funcionario:
 
 
 class Gerente:
-    def __init__(self):
-        self.nick = None
-        self.nome = None
-        self.senha = None
-
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -174,6 +187,17 @@ class Gerente:
         cursor = conn.cursor()
         cursor.execute("DROP TABLE GERENTE")
 
+    def listar_gerentes(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT nick,nome,senha FROM GERENTE")
+        lista = []
+        u = ("nick", "nome", "senha")
+        lista.append(u)
+        for linha in cursor.fetchall():
+            lista.append(linha)
+        return lista
+
     def limpaTabela(self):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -188,11 +212,6 @@ class Gerente:
 
 
 class Solicitacao:
-    def __init__(self):
-        self.idOrigem = None
-        self.idDestino = None
-        self.nickRef = None
-
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
@@ -203,10 +222,22 @@ class Solicitacao:
                     nickRef TEXT REFERENCES FUNCIONARIO(nick)
                 );
                 """)
+
     def destroiTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()
         cursor.execute("DROP TABLE SOLICITACAO")
+
+    def listar_solicitacoes(self):
+        conn = sqlite3.connect('meubanco.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT nickRef,idOrigem,idDestino FROM SOLICITACAO")
+        lista = []
+        u = ("nick","idOrigem","idDestino")
+        lista.append(u)
+        for linha in cursor.fetchall():
+            lista.append(linha)
+        return lista
 
     def limpaTabela(self):
         try:
@@ -222,11 +253,6 @@ class Solicitacao:
 
 
 class Avaliacao:
-    def __init__(self):
-        self.comentario = None
-        self.nota = None
-        self.idProjeto = None
-
     def criaTabela(self):
         conn = sqlite3.connect('meubanco.db')
         cursor = conn.cursor()

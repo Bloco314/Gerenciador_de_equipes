@@ -1,65 +1,32 @@
 import sqlite3
 
+import Entity
+
 
 # control da 'tela secreta'
 class Consultas:
-    def listaFuncionario(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT nick,nome,senha,cargo,idProjeto FROM FUNCIONARIO")
-        lista = []
-        u = ("nick", "nome", "senha", "cargo","projeto")
-        lista.append(u)
-        for linha in cursor.fetchall():
-            lista.append(linha)
-        return lista
+    def listar_funcionarios(self):
+        a = Entity.Funcionario()
+        return a.listar_funcionarios()
 
-    def listaLider(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT nick,nome,senha FROM LIDER")
-        lista = []
-        u = ("nick", "nome", "senha")
-        lista.append(u)
-        for linha in cursor.fetchall():
-            lista.append(linha)
-        return lista
+    def listar_lideres(self):
+        a = Entity.Lider()
+        return a.listar_lideres()
 
-    def listaGerente(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT nick,nome,senha FROM GERENTE")
-        lista = []
-        u = ("nick", "nome", "senha")
-        lista.append(u)
-        for linha in cursor.fetchall():
-            lista.append(linha)
-        return lista
+    def listar_gerentes(self):
+        a = Entity.Gerente()
+        return a.listar_gerentes()
 
-    def listaProjeto(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT id,nome,apresentado,nickLider FROM PROJETO")
-        lista = []
-        u = ("id", "nome","apresentado", "nickLider")
-        lista.append(u)
-        for linha in cursor.fetchall():
-            lista.append(linha)
-        return lista
+    def listar_projetos(self):
+        a = Entity.Projeto()
+        return a.listar_projetos()
 
-    def listaSolicitacao(self):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT nickRef,idOrigem,idDestino FROM SOLICITACAO")
-        lista = []
-        u = ("nick","idOrigem","idDestino")
-        lista.append(u)
-        for linha in cursor.fetchall():
-            lista.append(linha)
-        return lista
+    def listar_solicitacoes(self):
+        a = Entity.Solicitacao()
+        return a.listar_solicitacoes()
 
 # control use case 1
-class Logar:
+class C_Fazer_login:
     def loginLider(self, nick, senha):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -107,7 +74,7 @@ class Logar:
 
 
 # control use case 2
-class Cadastrar:
+class C_Realiza_cadastro:
     def cadastraLider(self, nick, nome, senha):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -149,7 +116,7 @@ class Cadastrar:
 
 
 # control use case 3
-class CriaProjeto:
+class C_Cria_projeto:
     def criaProjeto(self,id,nome,nick):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -165,7 +132,7 @@ class CriaProjeto:
 
 
 # control use case 4
-class ApresentaProjeto:
+class C_Apresenta_projeto:
     def listaProjetos(self,nick):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -204,7 +171,7 @@ class ApresentaProjeto:
 
 
 # control use case 5
-class SolicitaMembro:
+class C_Solicita_membro:
     def listaFuncionarios(self):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -235,7 +202,7 @@ class SolicitaMembro:
 
 
 # control use case 6
-class AceitaTransferencia:
+class C_Transfere_membro:
     def listaSolicitacoes(self):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -288,7 +255,7 @@ class AceitaTransferencia:
 
 
 # control use case 7
-class ArquivaProjeto:
+class C_Arquiva_projeto:
     def listaProjetos(self,nick):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -321,6 +288,8 @@ class ArquivaProjeto:
             print('SQLite error: %s' % (' '.join(er.args)))
             print("Exception class is: ", er.__class__)
             return [("erro no sql")]
+
+
 # control use case 8
 # control use case 9
 # control use case 10
