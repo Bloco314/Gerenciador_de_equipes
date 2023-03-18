@@ -136,6 +136,20 @@ class E_Projeto:
             print("Exception class is: ", er.__class__)
             return [("erro","no","sql")]
 
+    def listar_projetos_apresentados(self):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT id,nome,nickLider FROM PROJETO WHERE apresentado = ?",("apresentado",))
+            lista = [("id","nome","lider")]
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro","no","sql")]
+
     def cria_projeto(self, id, nome, nick):
         try:
             conn = sqlite3.connect('meubanco.db')

@@ -141,5 +141,36 @@ class C_Arquiva_projeto:
 
 
 # control use case 8
+class C_Aceita_solicitacao:
+    def listaSolicitacoes(self):
+        E = Entity.E_Solicitacao()
+        return E.listar_solicitacoes()
+
+    def aceitaSolicitacao(self,quest):
+        E = Entity.E_Solicitacao()
+
+        F = Entity.E_Funcionario()
+        F.tranfere_de_projeto(quest[0], quest[2])
+        if quest[1]==None:
+            E.deleta_solicitacao_semorigem(quest[0],quest[2])
+        else:
+            E.deleta_solicitacao(quest[0], quest[1],quest[2])
+        return "Transferido"
+
+    def recusaSolicitacao(self,quest):
+        E = Entity.E_Solicitacao()
+        if quest[1] == None:
+            E.deleta_solicitacao_semorigem(quest[0], quest[2])
+        else:
+            E.deleta_solicitao(quest[0],quest[1],quest[2])
+        return "Recusado com sucesso"
+
+
 # control use case 9
+class C_Avalia_projeto:
+    def listaProjetos(self):
+        E = Entity.E_Projeto()
+        return E.listar_projetos_apresentados()
+
+
 # control use case 10
