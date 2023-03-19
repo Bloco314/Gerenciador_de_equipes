@@ -103,6 +103,12 @@ class Tela_consultas(Tela_base):
         sol.setStyleSheet(f"QPushButton{css.btnEstilo2}")
         sol.clicked.connect(self.solicitacao)
 
+        ava = QPushButton("AVAL", self)
+        ava.move(610, 580)
+        ava.resize(100, 80)
+        ava.setStyleSheet(f"QPushButton{css.btnEstilo2}")
+        ava.clicked.connect(self.avaliacao)
+
     def criatabela(self):
         self.control = Control.Consultas()
         self.tabela = QTableView(self)
@@ -139,6 +145,11 @@ class Tela_consultas(Tela_base):
         self.tabela.setModel(self.model)
         self.tabela.reset()
 
+    def avaliacao(self):
+        lista = self.control.listar_avaliacoes()
+        self.model = Tabela(lista)
+        self.tabela.setModel(self.model)
+        self.tabela.reset()
 
 # tela inicial
 class Tela_inicial(Tela_base):
@@ -976,7 +987,7 @@ class F_Avalia_projeto(Tela_base):
     def avaliar(self):
         self.av = Control.C_Avalia_projeto()
         id = self.tabela.currentIndex().siblingAtColumn(0).data()
-        self.av.avaliarProjeto(id ,self.nota.text(),self.comentario.text())
+        self.msg = Tela_mensagem(self.av.avaliarProjeto(id ,self.nota.text(),self.comentario.text()))
 
     def criaTabela(self):
         self.tabela = QTableView(self)
@@ -1029,7 +1040,7 @@ class F_Solicita_transferencia(Tela_base):
     def transfere(self):
         self.tra = Control.C_Solicita_transferencia()
         idDestino = self.tabela.currentIndex().siblingAtColumn(0).data()
-        self.tra.solicitaTransferencia(self.logado,idDestino)
+        self.msg = Tela_mensagem(self.tra.solicitaTransferencia(self.logado,idDestino))
 
     def criaTabela(self):
         self.tabela = QTableView(self)

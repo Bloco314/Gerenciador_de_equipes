@@ -150,6 +150,20 @@ class E_Projeto:
             print("Exception class is: ", er.__class__)
             return [("erro","no","sql")]
 
+    def listar_projetos_exceto(self, id):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT id,nome,apresentado FROM PROJETO WHERE NOT id = ?", (id,))
+            lista = [("id","nome","lider")]
+            for linha in cursor.fetchall():
+                lista.append(linha)
+            return lista
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro","no","sql")]
+
     def cria_projeto(self, id, nome, nick):
         try:
             conn = sqlite3.connect('meubanco.db')
@@ -236,11 +250,16 @@ class E_Funcionario:
             return [("erro sql")]
 
     def get_idprojeto_bynick(self,nick):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT idProjeto FROM FUNCIONARIO WHERE nick=?", (nick,))
-        idOrigem = cursor.fetchone()[0]
-        return idOrigem
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT idProjeto FROM FUNCIONARIO WHERE nick=?", (nick,))
+            idOrigem = cursor.fetchone()[0]
+            return idOrigem
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return False
 
     def valida_login(self,nick,senha):
         try:
@@ -430,3 +449,16 @@ class E_Avaliacao:
         for linha in cursor.fetchall():
             lista.append(linha)
         return lista
+
+    def cria_avaliacao(self, id, nota, comentario):
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            tupla = (id, nota, comentario)
+            cursor.execute("""INSERT INTO AVALIACAO (idProjeto, nota, comentario) VALUES (?,?,?)""", tupla)
+            conn.commit()
+            return "Avaliado com sucesso!"
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return "Falha"

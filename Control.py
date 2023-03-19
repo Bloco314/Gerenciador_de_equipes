@@ -171,14 +171,20 @@ class C_Avalia_projeto:
         return E.listar_projetos_apresentados()
 
     def avaliarProjeto(self, id, nota, comentario):
-        # implementar #
-        print(id,nota,comentario)
+        E = Entity.E_Avaliacao()
+        return E.cria_avaliacao(id, nota, comentario)
 
 
 # control use case 10
 class C_Solicita_transferencia:
     def listaProjetos(self, nickRef):
-        return [("idficticio","fic1","fic2")]
+        F = Entity.E_Funcionario()
+        id = F.get_idprojeto_bynick(nickRef)
+        E = Entity.E_Projeto()
+        return E.listar_projetos_exceto(id)
 
     def solicitaTransferencia(self, nickRef, idDestino):
-        print(nickRef, idDestino)
+        E = Entity.E_Funcionario()
+        idO = E.get_idprojeto_bynick(nickRef)
+        S = Entity.E_Solicitacao()
+        return S.cria_solicitacao(idO, idDestino, nickRef)
