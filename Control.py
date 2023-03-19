@@ -1,5 +1,3 @@
-import sqlite3
-
 import Entity
 
 
@@ -172,5 +170,15 @@ class C_Avalia_projeto:
         E = Entity.E_Projeto()
         return E.listar_projetos_apresentados()
 
+    def avaliarProjeto(self, id, nota, comentario):
+        # implementar #
+        print(id,nota,comentario)
+
 
 # control use case 10
+class C_Solicita_transferencia:
+    def listaProjetos(self, nickRef):
+        return [("idficticio","fic1","fic2")]
+
+    def solicitaTransferencia(self, nickRef, idDestino):
+        print(nickRef, idDestino)

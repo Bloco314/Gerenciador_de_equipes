@@ -30,7 +30,7 @@ class Tela_base(QMainWindow):
 
     def closeEvent(self, event):
         print()
-        print("chegamos ao fim")
+        print("Chegamos ao fim.")
 
     def inicio(self):
         self.a = Tela_inicial()
@@ -310,7 +310,6 @@ class Tela_funcionario(Tela_base):
 
     def elementos(self):
         self.incluibotaodeinicio()
-
         nicked = QLineEdit(self.logado, self)
         nicked.move(5, 5)
         nicked.resize(200, 40)
@@ -318,8 +317,16 @@ class Tela_funcionario(Tela_base):
         nicked.setAlignment(Qt.AlignCenter)
         nicked.setDisabled(True)
 
+        solicita = QPushButton("Solicita Transf", self)
+        solicita.move(320, 250)
+        solicita.resize(190, 90)
+        solicita.setStyleSheet(f"QPushButton {css.btnEstilo}")
+        solicita.clicked.connect(self.solicitatranferencia)
+
     def solicitatranferencia(self):
-        print()
+        self.st = F_Solicita_transferencia(self.logado)
+        self.st.show()
+        self.setVisible(False)
 
 
 # boundary use case 1
@@ -932,6 +939,45 @@ class F_Avalia_projeto(Tela_base):
         self.criaTabela()
         self.preenche()
 
+        nicked = QLineEdit(self.logado, self)
+        nicked.move(5, 5)
+        nicked.resize(200, 40)
+        nicked.setStyleSheet(f"QLineEdit{css.nickEstilo}")
+        nicked.setAlignment(Qt.AlignCenter)
+        nicked.setDisabled(True)
+
+        self.nota = QLineEdit(self)
+        self.nota.move(250, 580)
+        self.nota.resize(250, 30)
+        campotxt = QLineEdit("NOTA:", self)
+        campotxt.move(160, 580)
+        campotxt.resize(80, 30)
+        campotxt.setEnabled(False)
+
+        self.comentario = QLineEdit(self)
+        self.comentario.move(250, 630)
+        self.comentario.resize(250, 30)
+        campotxt2 = QLineEdit("Comentario:", self)
+        campotxt2.move(160, 630)
+        campotxt2.resize(80, 30)
+        campotxt2.setEnabled(False)
+
+        self.avalia = QPushButton("Avaliar", self)
+        self.avalia.move(520, 580)
+        self.avalia.resize(140, 70)
+        self.avalia.setStyleSheet(f"QPushButton{css.btnEstilo}")
+        self.avalia.clicked.connect(self.avaliar)
+
+        self.help = QPushButton("?", self)
+        self.help.move(700, 600)
+        self.help.resize(80, 70)
+        self.help.clicked.connect(self.helpme)
+
+    def avaliar(self):
+        self.av = Control.C_Avalia_projeto()
+        id = self.tabela.currentIndex().siblingAtColumn(0).data()
+        self.av.avaliarProjeto(id ,self.nota.text(),self.comentario.text())
+
     def criaTabela(self):
         self.tabela = QTableView(self)
         self.tabela.move(160, 50)
@@ -945,6 +991,9 @@ class F_Avalia_projeto(Tela_base):
         self.tabela.setModel(self.model)
         self.tabela.reset()
 
+    def helpme(self):
+        self.msg = Tela_mensagem("Selecione uma linha na tabela")
+
     def inicio(self):
         self.a = Tela_gerente(self.logado)
         self.a.show()
@@ -953,11 +1002,49 @@ class F_Avalia_projeto(Tela_base):
 
 # boundary usecase 10
 class F_Solicita_transferencia(Tela_base):
-    def __init__(self):
+    def __init__(self, nick):
         super().__init__()
         self.setTitulo("SOLICITA TRANFERENCIA")
+        self.logado = nick
         self.elementos()
         self.carregarJanela()
 
     def elementos(self):
         self.incluibotaodeinicio()
+        self.criaTabela()
+        self.preenche()
+        nicked = QLineEdit(self.logado, self)
+        nicked.move(5, 5)
+        nicked.resize(200, 40)
+        nicked.setStyleSheet(f"QLineEdit{css.nickEstilo}")
+        nicked.setAlignment(Qt.AlignCenter)
+        nicked.setDisabled(True)
+
+        self.slctr = QPushButton("Transferir", self)
+        self.slctr.move(330, 580)
+        self.slctr.resize(140, 70)
+        self.slctr.setStyleSheet(f"QPushButton{css.btnEstilo}")
+        self.slctr.clicked.connect(self.transfere)
+
+    def transfere(self):
+        self.tra = Control.C_Solicita_transferencia()
+        idDestino = self.tabela.currentIndex().siblingAtColumn(0).data()
+        self.tra.solicitaTransferencia(self.logado,idDestino)
+
+    def criaTabela(self):
+        self.tabela = QTableView(self)
+        self.tabela.move(160, 50)
+        self.tabela.resize(475, 500)
+        self.solicita = Control.C_Solicita_transferencia()
+        self.preenche()
+
+    def preenche(self):
+        lista = self.solicita.listaProjetos(self.logado)
+        self.model = Tabela(lista)
+        self.tabela.setModel(self.model)
+        self.tabela.reset()
+
+    def inicio(self):
+        self.ini = Tela_funcionario(self.logado)
+        self.ini.show()
+        self.setVisible(False)

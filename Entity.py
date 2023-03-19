@@ -1,6 +1,6 @@
 import sqlite3
 
-#responsavel por inicializar o BD
+
 class ADMDB:
     def __init__(self):
         self.criaDB()
