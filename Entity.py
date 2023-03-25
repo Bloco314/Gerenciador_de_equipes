@@ -212,13 +212,18 @@ class E_Projeto:
             return [("erro no sql")]
 
     def projeto_existe(self, id):
-        conn = sqlite3.connect('meubanco.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE ID = ?", (id,))
-        numberOfRows = cursor.fetchone()[0]
-        if numberOfRows > 0:
-            return True
-        return False
+        try:
+            conn = sqlite3.connect('meubanco.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(id) FROM PROJETO WHERE ID = ?", (id,))
+            numberOfRows = cursor.fetchone()[0]
+            if numberOfRows > 0:
+                return True
+            return False
+        except sqlite3.Error as er:
+            print('SQLite error: %s' % (' '.join(er.args)))
+            print("Exception class is: ", er.__class__)
+            return [("erro no sql")]
 
 
 class E_Funcionario:
@@ -293,7 +298,7 @@ class E_Funcionario:
         try:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
-            cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE idProjeto = ?", (id, id))
+            cursor.execute("UPDATE FUNCIONARIO SET idProjeto = ? WHERE idProjeto = ?", (None, id))
             conn.commit()
         except sqlite3.Error as er:
             print('SQLite error: %s' % (' '.join(er.args)))

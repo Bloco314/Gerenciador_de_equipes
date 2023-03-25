@@ -123,19 +123,12 @@ class C_Arquiva_projeto:
 
     def arquivaProjeto(self,id):
         E = Entity.E_Projeto()
-        try:
-            conn = sqlite3.connect('meubanco.db')
-            cursor = conn.cursor()
-            if E.projeto_existe(id):
-                F = Entity.E_Funcionario()
-                F.desvincula_funcionarios_do_projeto(id)
-                return E.deletar(id)
-            else:
-                return "ID invalido"
-        except sqlite3.Error as er:
-            print('SQLite error: %s' % (' '.join(er.args)))
-            print("Exception class is: ", er.__class__)
-            return [("erro no sql")]
+        if E.projeto_existe(id):
+            F = Entity.E_Funcionario()
+            F.desvincula_funcionarios_do_projeto(id)
+            return E.deletar(id)
+        else:
+            return "ID invalido"
 
 
 # control use case 8
