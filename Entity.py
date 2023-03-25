@@ -155,7 +155,7 @@ class E_Projeto:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
             cursor.execute("SELECT id,nome,apresentado FROM PROJETO WHERE NOT id = ?", (id,))
-            lista = [("id","nome","lider")]
+            lista = [("id","nome","estado")]
             for linha in cursor.fetchall():
                 lista.append(linha)
             return lista
@@ -260,6 +260,8 @@ class E_Funcionario:
             cursor = conn.cursor()
             cursor.execute("SELECT idProjeto FROM FUNCIONARIO WHERE nick=?", (nick,))
             idOrigem = cursor.fetchone()[0]
+            if idOrigem == None:
+                return False
             return idOrigem
         except sqlite3.Error as er:
             print('SQLite error: %s' % (' '.join(er.args)))
