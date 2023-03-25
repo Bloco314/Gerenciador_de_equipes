@@ -99,8 +99,8 @@ class C_Transfere_membro:
         E = Entity.E_Solicitacao()
 
         F = Entity.E_Funcionario()
-        F.tranfere_de_projeto(quest[0], quest[2])
-        if quest[1]==None:
+        F.transfere_de_projeto(quest[0], quest[2])
+        if quest[1]==None or quest[1] == '0':
             E.deleta_solicitacao_semorigem(quest[0],quest[2])
         else:
             E.deleta_solicitacao(quest[0], quest[1],quest[2])
@@ -108,9 +108,12 @@ class C_Transfere_membro:
 
     def recusaSolicitacao(self,quest):
         E = Entity.E_Solicitacao()
-        if quest[1] == None:
+        print(quest)
+        if (quest[1] == None) or (quest[1] == '0'):
+            print("2")
             E.deleta_solicitacao_semorigem(quest[0], quest[2])
         else:
+            print("3")
             E.deleta_solicitao(quest[0],quest[1],quest[2])
         return "Recusado com sucesso"
 
@@ -139,10 +142,9 @@ class C_Aceita_solicitacao:
 
     def aceitaSolicitacao(self,quest):
         E = Entity.E_Solicitacao()
-
         F = Entity.E_Funcionario()
-        F.tranfere_de_projeto(quest[0], quest[2])
-        if quest[1]==None:
+        F.transfere_de_projeto(quest[0], quest[2])
+        if quest[1]==None or quest[1] == '0':
             E.deleta_solicitacao_semorigem(quest[0],quest[2])
         else:
             E.deleta_solicitacao(quest[0], quest[1],quest[2])
@@ -150,7 +152,7 @@ class C_Aceita_solicitacao:
 
     def recusaSolicitacao(self,quest):
         E = Entity.E_Solicitacao()
-        if quest[1] == None:
+        if quest[1] == None or quest[1] == '0':
             E.deleta_solicitacao_semorigem(quest[0], quest[2])
         else:
             E.deleta_solicitao(quest[0],quest[1],quest[2])

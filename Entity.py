@@ -307,7 +307,7 @@ class E_Funcionario:
             print("Exception class is: ", er.__class__)
             return [("erro no sql")]
 
-    def tranfere_de_projeto(self, nick, iddestino):
+    def transfere_de_projeto(self, nick, iddestino):
         try:
             conn = sqlite3.connect('meubanco.db')
             cursor = conn.cursor()
