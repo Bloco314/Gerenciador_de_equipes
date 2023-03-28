@@ -30,5 +30,5 @@ Observações
     refazer diversas vezes.
     -os arquivos Boundary, Control e Entity representam o modelo BCE:
         --Boundary possui as classes de tela e todos os componentes visuais com alguma logica
-        --Control tem as classes de controle que podem de fato alterar as entidades( no meu caso tabelas sql)
+        --Control tem as classes de controle
         --Entity define as entidades/tabela do sistema
